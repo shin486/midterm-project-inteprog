@@ -82,7 +82,7 @@ void displayMenu() {
 int main() {
     Book books[SIZE];
     int bookcount = 0;
-
+    bool exitProgram = false;
    do {
        displayMenu();
        cin >> choice;
@@ -566,8 +566,13 @@ int main() {
             (key.length() == 1);
         }
             }  
+        } else if (choice == 7) {
+            cout << "Exiting program\n";
+            exitProgram = true;
+        } else {
+            cout << "Invalid input! Please enter a digit only." << endl;
         }
-          } while (choice != 7);  
         
-          cout << "Exiting program\n";
+          } while (!exitProgram);  
+        
           return 0; } 
