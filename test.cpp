@@ -86,6 +86,7 @@ int main() {
    do {
        displayMenu();
        cin >> choice;
+       
        if (!cin || cin.peek() != '\n') {
            cout << "Invalid input! Please enter a digit only." << endl;
            cin.clear();
@@ -158,9 +159,9 @@ getline(cin, isbn);
 
 string cleaned_isbn;
 for (char ch : isbn) {
-    if (ch != '-') { 
+    if (ch != '-' && ch != ' ') { // ignore hyphens and spaces
         if (ch < '0' || ch > '9') { 
-            cleaned_isbn = "-"; 
+            cleaned_isbn = ""; // reset cleaned_isbn to empty string
             break;
         }
         cleaned_isbn += ch;
@@ -171,17 +172,18 @@ while (cleaned_isbn.empty() || (cleaned_isbn.length() != 10 && cleaned_isbn.leng
     cout << "Invalid ISBN! Please enter a 10 or 13-digit number: ";
     getline(cin, isbn);
 
-    cleaned_isbn = "-"; 
+    cleaned_isbn = ""; 
     for (char ch : isbn) {
-        if (ch != '-') {
+        if (ch != '-' && ch != ' ') { 
             if (ch < '0' || ch > '9') {
-                cleaned_isbn = "-";
+                cleaned_isbn = ""; 
                 break;
             }
             cleaned_isbn += ch;
         }
     } 
-} books[bookcount].setISBN(isbn);
+} 
+books[bookcount].setISBN(cleaned_isbn);
                 
             
             cout << "Add Title: ";
@@ -254,14 +256,14 @@ books[bookcount].setPublication(publication);
                     found = true;
                     string isbn, title, author, edition, publication;
         
-                    cout << "Add ISBN (10 or 13 digits): ";
+                    cout << "Edit ISBN (10 or 13 digits): ";
 getline(cin, isbn);
 
 string cleaned_isbn;
 for (char ch : isbn) {
-    if (ch != ' ') { 
+    if (ch != '-' && ch != ' ') { // ignore hyphens and spaces
         if (ch < '0' || ch > '9') { 
-            cleaned_isbn = ""; 
+            cleaned_isbn = ""; // reset cleaned_isbn to empty string
             break;
         }
         cleaned_isbn += ch;
@@ -274,15 +276,17 @@ while (cleaned_isbn.empty() || (cleaned_isbn.length() != 10 && cleaned_isbn.leng
 
     cleaned_isbn = ""; 
     for (char ch : isbn) {
-        if (ch != ' ') {
+        if (ch != '-' && ch != ' ') { 
             if (ch < '0' || ch > '9') {
-                cleaned_isbn = "";
+                cleaned_isbn = ""; 
                 break;
             }
             cleaned_isbn += ch;
         }
     } 
-} books[i].setISBN(isbn);
+} 
+books[i].setISBN(cleaned_isbn);
+                
         
                     cout << "Edit Title: ";
                     cin.ignore();
@@ -445,7 +449,7 @@ books[i].setEdition(edition);
                   cout << "Deletion cancelled." << endl;
                   validInput = true;
               } else {
-                  cout << "Invalid input! Please enter Y or N only.";
+                  cout << "Invalid input! Please enter Y or N only: ";
               }
           } }
         }   else if (choice == 5) {  
@@ -479,32 +483,32 @@ while (category.empty() || category.find(" ") != string::npos) {
             bool found = false;
         
             cout << "\nAll Books in " << category << ":\n";
-            cout << "----------------------------------------------------------\n";
-            cout << left << setw(10) << "ID" 
-                 << setw(15) << "ISBN" 
-                 << setw(25) << "Title" 
-                 << setw(15) << "Author" 
-                 << setw(10) << "Edition" 
-                 << setw(15) << "Publication" 
-                 << setw(10) << "Category" << endl;
-            cout << "----------------------------------------------------------\n";
-        
+            cout << "---------------------------------------------------------------------------------------------\n";
+            cout << left << setw(10) << "ID"
+                 << setw(15) << "ISBN"
+                 << setw(20) << "Title"
+                 << setw(20) << "Author"
+                 << setw(10) << "Edition"
+                 << setw(20) << "Publication"
+                 << setw(15) << "Category" << endl;
+            cout << "---------------------------------------------------------------------------------------------\n";
+            
             for (int i = 0; i < bookcount; i++) {
                 string bookCategory = toUpperCase(books[i].getCategory());
-    
+            
                 if (bookCategory == cat_upper) {
                     found = true;
                     cout << left << setw(10) << books[i].getID()
                          << setw(15) << books[i].getISBN()
-                         << setw(25) << books[i].getTitle()
-                         << setw(15) << books[i].getAuthor()
+                         << setw(20) << books[i].getTitle()
+                         << setw(20) << books[i].getAuthor()
                          << setw(10) << books[i].getEdition()
-                         << setw(15) << books[i].getPublication()
-                         << setw(10) << books[i].getCategory() << endl;
+                         << setw(20) << books[i].getPublication()
+                         << setw(15) << books[i].getCategory() << endl;
                 }
             }
-        
-            cout << "----------------------------------------------------------\n";
+            
+            cout << "---------------------------------------------------------------------------------------------\n";
         
             if (!found) {
                 cout << "No books found in this category!\n";
@@ -532,26 +536,27 @@ while (category.empty() || category.find(" ") != string::npos) {
         }
             } else {
                 cout << "\nAll Books in Library:\n";
-                cout << "----------------------------------------------------------\n";
-                cout << left << setw(10) << "ID" 
-                     << setw(15) << "ISBN" 
-                     << setw(25) << "Title" 
-                     << setw(15) << "Author" 
-                     << setw(10) << "Edition" 
-                     << setw(15) << "Publication" 
-                     << setw(10) << "Category" << endl;
-                cout << "----------------------------------------------------------\n";
-        
+                cout << "---------------------------------------------------------------------------------------------\n";
+                cout << left << setw(10) << "ID"
+                     << setw(15) << "ISBN"
+                     << setw(25) << "Title"
+                     << setw(20) << "Author"
+                     << setw(10) << "Edition"
+                     << setw(20) << "Publication"
+                     << setw(15) << "Category" << endl;
+                cout << "---------------------------------------------------------------------------------------------\n";
+                
                 for (int i = 0; i < bookcount; i++) {
                     cout << left << setw(10) << books[i].getID()
                          << setw(15) << books[i].getISBN()
                          << setw(25) << books[i].getTitle()
-                         << setw(15) << books[i].getAuthor()
+                         << setw(20) << books[i].getAuthor()
                          << setw(10) << books[i].getEdition()
-                         << setw(15) << books[i].getPublication()
-                         << setw(10) << books[i].getCategory() << endl;
+                         << setw(20) << books[i].getPublication()
+                         << setw(15) << books[i].getCategory() << endl;
                 }
-                cout << "----------------------------------------------------------\n";
+                
+                cout << "---------------------------------------------------------------------------------------------\n";
                 cout << "Press any key to continue: ";
             string key;
             cin >> key;

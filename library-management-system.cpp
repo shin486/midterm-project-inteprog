@@ -3,6 +3,7 @@
 #include <iomanip>
 using namespace std;
 
+
 string toUpperCase(string str) {
     for (char &c : str) {
         if (c >= 'a' && c <= 'z') {
@@ -85,6 +86,7 @@ int main() {
    do {
        displayMenu();
        cin >> choice;
+       
        if (!cin || cin.peek() != '\n') {
            cout << "Invalid input! Please enter a digit only." << endl;
            cin.clear();
@@ -115,6 +117,8 @@ int main() {
             books[bookcount].setCategory(category);
 
             string id, isbn, title, author, edition, publication;
+            
+          
            cout << "Add ID: ";
            getline(cin, id);
            while (id.find(" ") != string::npos) {
@@ -137,6 +141,7 @@ int main() {
                 cin >> id;
                 id_upper = toUpperCase(id); 
                 dupID = false;
+                cin.ignore();
         
                 for (int i = 0; i < bookcount; i++) {
                     if (toUpperCase(books[i].getID()) == id_upper) {
@@ -147,38 +152,39 @@ int main() {
             }
         
             books[bookcount].setID(id);
-            
+
+           
             cout << "Add ISBN (10 or 13 digits): ";
-getline(cin, isbn);
+            getline(cin, isbn);
 
-string cleaned_isbn;
-for (char ch : isbn) {
-    if (ch != ' ') { 
-        if (ch < '0' || ch > '9') { 
-            cleaned_isbn = ""; 
-            break;
-        }
-        cleaned_isbn += ch;
-    }
-}
-
-while (cleaned_isbn.empty() || (cleaned_isbn.length() != 10 && cleaned_isbn.length() != 13)) {
-    cout << "Invalid ISBN! Please enter a 10 or 13-digit number: ";
-    getline(cin, isbn);
-
-    cleaned_isbn = ""; 
-    for (char ch : isbn) {
-        if (ch != ' ') {
-            if (ch < '0' || ch > '9') {
-                cleaned_isbn = "";
-                break;
+            string cleaned_isbn;
+            for (char ch : isbn) {
+                if (ch != '-' && ch != ' ') { // ignore hyphens and spaces
+                    if (ch < '0' || ch > '9') { 
+                        cleaned_isbn = ""; // reset cleaned_isbn to empty string
+                        break;
+                    }
+                    cleaned_isbn += ch;
+                }
             }
-            cleaned_isbn += ch;
-        }
-    }
-}
-            
-            books[bookcount].setISBN(isbn);
+
+            while (cleaned_isbn.empty() || (cleaned_isbn.length() != 10 && cleaned_isbn.length() != 13)) {
+                cout << "Invalid ISBN! Please enter a 10 or 13-digit number: ";
+                getline(cin, isbn);
+
+                cleaned_isbn = ""; 
+                for (char ch : isbn) {
+                    if (ch != '-' && ch != ' ') { 
+                        if (ch < '0' || ch > '9') {
+                            cleaned_isbn = ""; 
+                            break;
+                        }
+                        cleaned_isbn += ch;
+                    }
+                } 
+            } 
+            books[bookcount].setISBN(cleaned_isbn);
+                
             
             cout << "Add Title: ";
             if (cin.peek() == '\n') cin.ignore();  
@@ -191,31 +197,34 @@ while (cleaned_isbn.empty() || (cleaned_isbn.length() != 10 && cleaned_isbn.leng
             
             books[bookcount].setTitle(title);
             
+            cout << "Add Author: ";
+            getline(cin, author);
+            while (author.empty()) {
+                cout << "Author cannot be empty! Please enter a valid author name: ";
+                getline(cin, author);
+            }
+            books[bookcount].setAuthor(author);
+
+            cout << "Add Edition: ";
+            getline(cin, edition);
+
+            while (edition.empty()) 
+            {
+                cout << "Edition cannot be empty! Please enter a valid edition: ";
+                getline(cin, edition);
+            }
 
 
-cout << "Add Author: ";
-getline(cin, author);
-while (author.empty()) {
-    cout << "Author cannot be empty! Please enter a valid author name: ";
-    getline(cin, author);
-}
-books[bookcount].setAuthor(author);
+            books[bookcount].setEdition(edition);
 
 
-cout << "Add Edition (e.g., 1st, 2nd, 3rd): ";
-getline(cin, edition);
-while (edition.empty() ||  !(toupper(edition.back()) == 'T' || toupper(edition.back()) == 'D' || toupper(edition.back()) == 'H')) {
-    cout << "Invalid format! Enter edition (e.g., 1st, 2nd, 3rd): ";
-    getline(cin, edition);
-} books[bookcount].setEdition(edition);
-
-cout << "Add Publication: ";
-getline(cin, publication);
-while (publication.empty()) {
-    cout << "Publication cannot be empty! Please enter a valid publication: ";
-    getline(cin, publication);
-}
-books[bookcount].setPublication(publication);
+            cout << "Add Publication: ";
+            getline(cin, publication);
+            while (publication.empty()) {
+                cout << "Publication cannot be empty! Please enter a valid publication: ";
+                getline(cin, publication);
+            }
+            books[bookcount].setPublication(publication);
 
 
             cout << "Book added successfully!\n";
@@ -247,20 +256,37 @@ books[bookcount].setPublication(publication);
                     found = true;
                     string isbn, title, author, edition, publication;
         
-                    cout << "Edit ISBN: ";
-                    cin >> isbn;
-                    while (isbn.length() != 10 && isbn.length() != 13) {
-                        cout << "Invalid input! ISBN should be either 10 or 13 digits. Please enter ISBN again: ";
-                        cin >> isbn;
-                    }
-                    for (char c : isbn) {
-                        if (!isdigit(c)) {
-                            cout << "Invalid input! ISBN should only contain digits. Please enter ISBN again: ";
-                            cin >> isbn;
-                            break;
+                    cout << "Edit ISBN (10 or 13 digits): ";
+                    getline(cin, isbn);
+
+                    string cleaned_isbn;
+                    for (char ch : isbn) {
+                        if (ch != '-' && ch != ' ') { // ignore hyphens and spaces
+                            if (ch < '0' || ch > '9') { 
+                                cleaned_isbn = ""; // reset cleaned_isbn to empty string
+                                break;
+                            }
+                            cleaned_isbn += ch;
                         }
                     }
-                    books[i].setISBN(isbn);
+
+                    while (cleaned_isbn.empty() || (cleaned_isbn.length() != 10 && cleaned_isbn.length() != 13)) {
+                        cout << "Invalid ISBN! Please enter a 10 or 13-digit number: ";
+                        getline(cin, isbn);
+
+                        cleaned_isbn = ""; 
+                        for (char ch : isbn) {
+                            if (ch != '-' && ch != ' ') { 
+                                if (ch < '0' || ch > '9') {
+                                    cleaned_isbn = ""; 
+                                    break;
+                                }
+                                cleaned_isbn += ch;
+                            }
+                        } 
+                    } 
+                    books[i].setISBN(cleaned_isbn);
+                
         
                     cout << "Edit Title: ";
                     cin.ignore();
@@ -280,10 +306,12 @@ books[bookcount].setPublication(publication);
                     books[i].setAuthor(author);
         
                     cout << "Edit Edition: ";
-                    cin >> edition;
-                    while (edition.length() < 3 || edition.substr(edition.length() - 2) != "nd" && edition.substr(edition.length() - 2) != "rd" && edition.substr(edition.length() - 2) != "st" && edition.substr(edition.length() - 2) != "th") {
-                        cout << "Invalid input! Edition should be in the format '1st', '2nd', '3rd', etc. Please enter edition again: ";
-                        cin >> edition;
+                    getline(cin, edition);
+
+                    while (edition.empty())
+                    {
+                        cout << "Invalid edit! Edition should not be empty. Please enter edition again: ";
+                        getline(cin, edition);
                     }
                     books[i].setEdition(edition);
         
@@ -304,8 +332,14 @@ books[bookcount].setPublication(publication);
             if (!found) {
                 cout << "Book with ID not found!\n";
                 cout << "Press any key to continue: ";
-                cin.ignore();
-                cin.get();
+            string key;
+            cin >> key;
+            getline(cin, key);
+        for (int i = 0; i < key.length(); i++) {
+            key[i] = tolower(key[i]);
+            (key.length() == 1);
+        }
+                
             }
         }
         
@@ -339,17 +373,27 @@ books[bookcount].setPublication(publication);
                     cout << "Publication   : " << books[i].getPublication() << endl;
                     cout << "--------------------------\n";
                     cout << "Press any key to continue: ";
-                    cin.ignore();
-                    cin.get();
+            string key;
+            cin >> key;
+            getline(cin, key);
+        for (int i = 0; i < key.length(); i++) {
+            key[i] = tolower(key[i]);
+            (key.length() == 1);
+        }
                     break;
                 }
             }
-            
+    
             if (!found) {
                 cout << "Book ID not found!\n";
                 cout << "Press any key to continue: ";
-                cin.ignore();
-                cin.get();
+            string key;
+            cin >> key;
+            getline(cin, key);
+        for (int i = 0; i < key.length(); i++) {
+            key[i] = tolower(key[i]);
+            (key.length() == 1);
+        }
             }
         } 
         
@@ -394,24 +438,29 @@ books[bookcount].setPublication(publication);
                   cout << "Book deleted successfully.\n";
                   validInput = true;
                   cout << "Press any key to continue: ";
-                  cin.ignore();
-                  cin.get();
+                  string key;
+                  cin >> key;
+                  getline(cin, key);
+              for (int i = 0; i < key.length(); i++) {
+                  key[i] = tolower(key[i]);
+                  (key.length() == 1);
+              }
               } else if (confirm == "N" || confirm == "n") {
                   cout << "Deletion cancelled." << endl;
                   validInput = true;
               } else {
-                  cout << "Invalid input! Please enter Y or N only.";
+                  cout << "Invalid input! Please enter Y or N only: ";
               }
           } }
         }   else if (choice == 5) {  
             string category;
             cout << "Enter Category (Fiction/Non-Fiction): ";
-cin.ignore();
-getline(cin, category);
-while (category.empty() || category.find(" ") != string::npos) {
-    cout << "Invalid input! Category should not be empty and should not contain spaces. Please enter category again: ";
-    getline(cin, category);
-}
+            cin.ignore();
+            getline(cin, category);
+            while (category.empty() || category.find(" ") != string::npos) {
+                cout << "Invalid input! Category should not be empty and should not contain spaces. Please enter category again: ";
+                getline(cin, category);
+            }
      
 
             string lowerCategory = category;
@@ -434,40 +483,45 @@ while (category.empty() || category.find(" ") != string::npos) {
             bool found = false;
         
             cout << "\nAll Books in " << category << ":\n";
-            cout << "----------------------------------------------------------\n";
-            cout << left << setw(10) << "ID" 
-                 << setw(15) << "ISBN" 
-                 << setw(25) << "Title" 
-                 << setw(15) << "Author" 
-                 << setw(10) << "Edition" 
-                 << setw(15) << "Publication" 
-                 << setw(10) << "Category" << endl;
-            cout << "----------------------------------------------------------\n";
-        
+            cout << "---------------------------------------------------------------------------------------------\n";
+            cout << left << setw(10) << "ID"
+                 << setw(15) << "ISBN"
+                 << setw(20) << "Title"
+                 << setw(20) << "Author"
+                 << setw(10) << "Edition"
+                 << setw(20) << "Publication"
+                 << setw(15) << "Category" << endl;
+            cout << "---------------------------------------------------------------------------------------------\n";
+            
             for (int i = 0; i < bookcount; i++) {
                 string bookCategory = toUpperCase(books[i].getCategory());
-    
+            
                 if (bookCategory == cat_upper) {
                     found = true;
                     cout << left << setw(10) << books[i].getID()
                          << setw(15) << books[i].getISBN()
-                         << setw(25) << books[i].getTitle()
-                         << setw(15) << books[i].getAuthor()
+                         << setw(20) << books[i].getTitle()
+                         << setw(20) << books[i].getAuthor()
                          << setw(10) << books[i].getEdition()
-                         << setw(15) << books[i].getPublication()
-                         << setw(10) << books[i].getCategory() << endl;
+                         << setw(20) << books[i].getPublication()
+                         << setw(15) << books[i].getCategory() << endl;
                 }
             }
-        
-            cout << "----------------------------------------------------------\n";
+            
+            cout << "---------------------------------------------------------------------------------------------\n";
         
             if (!found) {
                 cout << "No books found in this category!\n";
             }
         
             cout << "Press any key to continue: ";
-            cin.ignore();
-            cin.get();
+            string key;
+            cin >> key;
+            getline(cin, key);
+        for (int i = 0; i < key.length(); i++) {
+            key[i] = tolower(key[i]);
+            (key.length() == 1);
+        }
         } 
         else if (choice == 6) {  
             if (bookcount == 0) {
@@ -482,37 +536,38 @@ while (category.empty() || category.find(" ") != string::npos) {
         }
             } else {
                 cout << "\nAll Books in Library:\n";
-                cout << "----------------------------------------------------------\n";
-                cout << left << setw(10) << "ID" 
-                     << setw(15) << "ISBN" 
-                     << setw(25) << "Title" 
-                     << setw(15) << "Author" 
-                     << setw(10) << "Edition" 
-                     << setw(15) << "Publication" 
-                     << setw(10) << "Category" << endl;
-                cout << "----------------------------------------------------------\n";
-        
+                cout << "---------------------------------------------------------------------------------------------\n";
+                cout << left << setw(10) << "ID"
+                     << setw(15) << "ISBN"
+                     << setw(25) << "Title"
+                     << setw(20) << "Author"
+                     << setw(10) << "Edition"
+                     << setw(20) << "Publication"
+                     << setw(15) << "Category" << endl;
+                cout << "---------------------------------------------------------------------------------------------\n";
+                
                 for (int i = 0; i < bookcount; i++) {
                     cout << left << setw(10) << books[i].getID()
                          << setw(15) << books[i].getISBN()
                          << setw(25) << books[i].getTitle()
-                         << setw(15) << books[i].getAuthor()
+                         << setw(20) << books[i].getAuthor()
                          << setw(10) << books[i].getEdition()
-                         << setw(15) << books[i].getPublication()
-                         << setw(10) << books[i].getCategory() << endl;
+                         << setw(20) << books[i].getPublication()
+                         << setw(15) << books[i].getCategory() << endl;
                 }
-                cout << "----------------------------------------------------------\n";
+                
+                cout << "---------------------------------------------------------------------------------------------\n";
                 cout << "Press any key to continue: ";
-                string key;
-                cin >> key;
-                getline(cin, key);
-            for (int i = 0; i < key.length(); i++) {
-                key[i] = tolower(key[i]);
-                (key.length() == 1);
-            }
+            string key;
+            cin >> key;
+            getline(cin, key);
+        for (int i = 0; i < key.length(); i++) {
+            key[i] = tolower(key[i]);
+            (key.length() == 1);
+        }
             }  
         }
           } while (choice != 7);  
         
           cout << "Exiting program\n";
-          return 0; }
+          return 0; } 
